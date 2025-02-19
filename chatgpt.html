@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צ'אט GPT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        #chat-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 300px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>צ'אט עם GPT</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="הקלד את השאלה שלך כאן...">
+    <button onclick="sendMessage()">שלח</button>
+
+    <script>
+        const apiKey = "your-api-key-here";  // הכנס את ה-API Key שלך כאן
+
+        // פונקציה לשלוח את השאלה ל-API ולקבל תשובה
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (!userInput) return;
+
+            // הצגת השאלה בצ'אט
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div><strong>אתה:</strong> ${userInput}</div>`;
+            document.getElementById('user-input').value = '';
+
+            // בקשה ל-API של OpenAI
+            const response = await fetch('https://api.openai.com/v1/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    model: "text-davinci-003",  // המודל שאתה רוצה להשתמש בו
+                    prompt: userInput,
+                    max_tokens: 150,
+                    temperature: 0.7,
+                }),
+            });
+
+            const data = await response.json();
+            const botResponse = data.choices[0].text.trim();
+
+            // הצגת התשובה בצ'אט
+            chatBox.innerHTML += `<div><strong>צ'אט בוט:</strong> ${botResponse}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
